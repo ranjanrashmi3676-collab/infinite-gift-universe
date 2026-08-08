@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#05040c">
+<meta name="description" content="A cinematic, personalized gift universe made just for someone special.">
+<title>Infinite Gift Universe</title>
+
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="assets/icons/icon-192.png">
+<link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============ PERSISTENT BACKDROP (canvas starfield lives behind everything) ============ -->
+<canvas id="starfield" aria-hidden="true"></canvas>
+<div id="nebula-layer" aria-hidden="true">
+  <div class="nebula nebula-a"></div>
+  <div class="nebula nebula-b"></div>
+  <div class="nebula nebula-c"></div>
+</div>
+
+<div id="app" role="application">
+
+  <!-- ============ SCREEN 0 — SETUP / PERSONALIZATION ============ -->
+  <section id="screen-setup" class="screen active-screen" aria-label="Create your universe">
+    <div class="setup-card glass">
+      <p class="eyebrow">Before the universe begins</p>
+      <h1 class="display-title small">Who is this infinite gift for?</h1>
+      <p class="setup-sub">A few details, and the whole cosmos will be shaped around them.</p>
+
+      <form id="setup-form" novalidate>
+        <div class="field">
+          <label for="f-name">Their name</label>
+          <input id="f-name" name="name" type="text" maxlength="30" placeholder="e.g. Kanha" autocomplete="off" required>
+        </div>
+
+        <div class="field">
+          <label for="f-occasion">Occasion</label>
+          <select id="f-occasion" name="occasion">
+            <option value="Birthday">Birthday</option>
+            <option value="Anniversary">Anniversary</option>
+            <option value="Friendship">Friendship</option>
+            <option value="Love">Love</option>
+            <option value="Thank You">Thank You</option>
+            <option value="Congratulations">Congratulations</option>
+            <option value="Good Luck">Good Luck</option>
+            <option value="Just Because">Just Because</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="f-relationship">Your relationship to them</label>
+          <select id="f-relationship" name="relationship">
+            <option value="Partner">Partner</option>
+            <option value="Best Friend">Best Friend</option>
+            <option value="Friend">Friend</option>
+            <option value="Family">Family</option>
+            <option value="Someone Special">Someone Special</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="f-message">Your message to them</label>
+          <textarea id="f-message" name="message" maxlength="240" rows="3" placeholder="Write something from the heart..."></textarea>
+        </div>
+
+        <div class="field">
+          <label>Favorite color</label>
+          <div class="color-swatches" role="radiogroup" aria-label="Favorite color">
+            <button type="button" class="swatch" data-color="#EC4899" style="--sw:#EC4899" role="radio" aria-checked="true" aria-label="Pink"></button>
+            <button type="button" class="swatch" data-color="#7C3AED" style="--sw:#7C3AED" role="radio" aria-checked="false" aria-label="Violet"></button>
+            <button type="button" class="swatch" data-color="#22D3EE" style="--sw:#22D3EE" role="radio" aria-checked="false" aria-label="Cyan"></button>
+            <button type="button" class="swatch" data-color="#F5C744" style="--sw:#F5C744" role="radio" aria-checked="false" aria-label="Gold"></button>
+            <button type="button" class="swatch" data-color="#34D399" style="--sw:#34D399" role="radio" aria-checked="false" aria-label="Emerald"></button>
+          </div>
+        </div>
+
+        <button type="button" id="ai-toggle-btn" class="ghost-btn">✨ Let Gift Universe AI help me</button>
+
+        <div id="ai-panel" class="ai-panel" hidden>
+          <label for="ai-input">Tell me something about the person you want to surprise…</label>
+          <textarea id="ai-input" rows="2" placeholder="e.g. She loves the ocean, always laughs at bad jokes, and just got a new job..."></textarea>
+          <button type="button" id="ai-generate-btn" class="ghost-btn small">Generate with AI ✨</button>
+          <div id="ai-result" class="ai-result" hidden></div>
+        </div>
+
+        <button type="submit" id="setup-submit" class="primary-btn">Begin the Universe</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN 1 — CINEMATIC INTRO ============ -->
+  <section id="screen-intro" class="screen" aria-label="Introduction">
+    <div class="intro-content">
+      <p class="intro-line line-1">A Universe Has A Gift For You…</p>
+      <p class="intro-line line-2">Something Infinite Is Waiting…</p>
+      <button id="enter-btn" class="primary-btn glow-btn" aria-label="Enter the universe">Enter The Universe</button>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN 2 — GIFT BOX ============ -->
+  <section id="screen-gift" class="screen" aria-label="Your gift box">
+    <h2 id="gift-heading" class="display-title medium"></h2>
+    <div id="gift-box-wrap">
+      <div id="gift-aura"></div>
+      <div id="orbit-stars" aria-hidden="true"></div>
+      <div id="gift-box" role="button" tabindex="0" aria-label="Open your gift">
+        <div class="box-lid"></div>
+        <div class="box-body"></div>
+        <div class="box-ribbon-v"></div>
+        <div class="box-ribbon-h"></div>
+        <div class="box-bow"></div>
+      </div>
+    </div>
+    <button id="open-btn" class="primary-btn glow-btn">Open The Universe 🎁</button>
+    <p class="hint-text">tap the box, or the button</p>
+  </section>
+
+  <!-- ============ COUNTDOWN OVERLAY ============ -->
+  <div id="countdown-overlay" aria-hidden="true">
+    <span id="countdown-number">3</span>
+  </div>
+
+  <!-- ============ FLASH OVERLAY ============ -->
+  <div id="flash-overlay" aria-hidden="true"></div>
+
+  <!-- ============ SCREEN 3 — GIFT UNIVERSE ============ -->
+  <section id="screen-universe" class="screen" aria-label="Gift universe">
+    <header id="universe-hud">
+      <div id="universe-title-wrap">
+        <p class="hud-eyebrow" id="universe-eyebrow"></p>
+      </div>
+      <div id="hud-controls">
+        <button id="achievements-btn" class="icon-btn" aria-label="Secret galaxy progress">
+          <span id="collect-count">0</span>/7 🌌
+        </button>
+        <button id="sound-btn" class="icon-btn" aria-label="Toggle sound">🔊</button>
+      </div>
+    </header>
+
+    <div id="universe-stage" aria-live="polite"></div>
+
+    <div id="infinite-mode-banner" hidden>
+      <p>∞ Infinite Mode Unlocked</p>
+    </div>
+
+    <button id="finale-btn" class="floating-finale-btn" hidden>See Your Finale ✨</button>
+  </section>
+
+  <!-- ============ OBJECT MODAL ============ -->
+  <div id="object-modal" class="modal-overlay" hidden>
+    <div class="modal-card glass" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <button class="modal-close" id="modal-close-btn" aria-label="Close">✕</button>
+      <div id="modal-icon" class="modal-icon"></div>
+      <h3 id="modal-title"></h3>
+      <p id="modal-text"></p>
+    </div>
+  </div>
+
+  <!-- ============ SECRET GALAXY UNLOCK ============ -->
+  <div id="secret-overlay" hidden>
+    <div id="portal-ring-a" class="portal-ring"></div>
+    <div id="portal-ring-b" class="portal-ring"></div>
+    <div id="portal-ring-c" class="portal-ring"></div>
+    <div id="portal-core"></div>
+    <h2 id="secret-heading">🌌 Secret Universe Unlocked</h2>
+    <button id="enter-secret-btn" class="primary-btn glow-btn">Step Through</button>
+  </div>
+
+  <section id="screen-secret" class="screen" aria-label="Secret galaxy">
+    <h2 class="display-title medium">A Hidden Corner of Your Universe</h2>
+    <p id="secret-message" class="secret-message"></p>
+    <button id="secret-continue-btn" class="primary-btn">Continue Exploring</button>
+  </section>
+
+  <!-- ============ SCREEN 4 — FINALE ============ -->
+  <section id="screen-finale" class="screen" aria-label="Finale">
+    <div class="finale-content">
+      <p class="intro-line">The universe may be infinite…</p>
+      <p class="intro-line">…but this gift was created especially for you.</p>
+      <h2 id="finale-name" class="display-title medium"></h2>
+      <p id="finale-message" class="finale-message"></p>
+
+      <div class="finale-actions">
+        <button id="restart-btn" class="ghost-btn">Create Another Universe</button>
+        <button id="share-btn" class="primary-btn">Share This Universe</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SHARE SHEET ============ -->
+  <div id="share-sheet" class="modal-overlay" hidden>
+    <div class="modal-card glass share-card" role="dialog" aria-modal="true">
+      <button class="modal-close" id="share-close-btn" aria-label="Close">✕</button>
+      <h3>Share This Universe</h3>
+      <div class="share-options">
+        <button class="share-opt" data-share="whatsapp">💬 WhatsApp</button>
+        <button class="share-opt" data-share="telegram">✈️ Telegram</button>
+        <button class="share-opt" data-share="copy">🔗 Copy Link</button>
+        <button class="share-opt" data-share="native" id="native-share-opt" hidden>📤 More Options</button>
+      </div>
+      <p id="copy-feedback" class="copy-feedback" hidden>Link copied ✓</p>
+    </div>
+  </div>
+
+  <!-- ============ ACHIEVEMENT TOAST ============ -->
+  <div id="achievement-toast" hidden>
+    <span id="achievement-toast-text"></span>
+  </div>
+
+  <!-- ============ INSTALL BUTTON ============ -->
+  <button id="install-btn" hidden>⬇ Install Universe</button>
+
+  <!-- ============ PERSISTENT SETTINGS BAR (visible after intro) ============ -->
+  <div id="reduced-motion-note" class="sr-only" aria-live="polite"></div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="script.js" defer></script>
+</body>
+</html>
